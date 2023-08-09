@@ -73,6 +73,8 @@ def BSM_put(x,t,T,vol,R,K):
     tau=T-t
     return np.exp(-R*tau)*K*norm.cdf(-d_minus(x,t,T,vol,R,K))-x*norm.cdf(-d_plus(x,t,T,vol,R,K))
 
+
+
 if __name__=="__main__":
     x=1
     t=1

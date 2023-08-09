@@ -25,6 +25,8 @@ class RateModel(ABC):
         pass
     def discount_factor(self,t,T):
         pass
+    def forward_price(self,val,t,T):
+        pass
 
 class Constant_Rate(RateModel):
     def __init__(self,r):
@@ -102,6 +104,10 @@ class NonRandomRate(RateModel):
     def precalculate(self,t0,t1):
         self.meanr=self.mean(t0,t1)
         self.RMSr=self.RMS(t0,t1)
+
+    def forward_price(self,val,t,T):
+        return val/self.zc_bond(t,T)
+
         
 
     def mean(self,t0,t1):

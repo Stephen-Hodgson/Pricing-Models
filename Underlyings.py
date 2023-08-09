@@ -190,7 +190,7 @@ if __name__=='__main__' and runthis:
     run_monte_carlo_simulation(10000,vol,epsilon,ts,t,drift)
 
 #Compare Non-Random to Constant Volatility
-runthis=True
+runthis=False
 if __name__=='__main__' and runthis:
     sigma=0.5
     ts=np.linspace(0,10,1000)
@@ -244,4 +244,15 @@ if __name__=='__main__' and runthis:
     S.plot_S_t()
     S2.plot_S_t()
     S3.plot_S_t()
+    plt.show()
+
+runthis=True
+if __name__=='__main__' and runthis:
+    ts=np.linspace(0,10,1000)
+    vol=vm.ConstantVol(1)
+    W=BrownianMotion.from_ts(ts)
+    S1=Stock(vol=vol,W=W,S0=1,drift=1,divis=0)
+    S2=Stock(vol=vol,W=W,S0=1,drift=np.array([0.01 for _ in range(len(W.get_ts()))]),divis=0)
+    S1.plot_S_t()
+    S2.plot_S_t()
     plt.show()

@@ -123,14 +123,14 @@ class BrownianMotion:
         Returns:
             BrownianMotion: Initialized BrownianMotion object.
         """
-        W=cls(W_0=W_0,t=0.,drift=drift,data=None)
+        W=cls(W_0=W_0,t=ts[0],drift=drift,data=None)
         n=len(ts)
         for i in range(1,n):
             W.update(ts[i]-ts[i-1], n=1, record_steps=1)
         return W
         
-
-if __name__=="__main__":
+runthis=False
+if __name__=="__main__" and runthis:
     W=BrownianMotion(drift=1)
     W.update(dt=1/512,n=5120,record_steps=10)
     print(len(W))
@@ -146,5 +146,5 @@ if __name__=="__main__":
         W=BrownianMotion(drift=drift,t=t)
         Ws=np.append(Ws,W.get_W())
     print(np.mean(Ws)/t,np.var(Ws)/t)
-     
+
 
