@@ -52,17 +52,17 @@ class UpAndOutCall():
         self.vals= vals
 
     @staticmethod
-    def calc_value(x,R,vol,t,T,K,B):
+    def BSM_val(x,R,vol,t,T,K,B):
         N=norm.cdf
         tau=T-t
         vals= x*(N(d_plus(x,t,T,vol,R,K))-N(d_plus(x,t,T,vol,R,B)))-np.exp(-R*tau)*K*(N(d_minus(x,t,T,vol,R,K))-N(d_minus(x,t,T,vol,R,B)))-B*((x/B)**(-2*R/(vol**2)))*(N(d_plus(B**2,t,T,vol,R,K*x))-N(d_plus(B,t,T,vol,R,x)))+np.exp(-R*tau)*K*((x/B)**((-2*R/(vol**2))+1))*(N(d_minus(B**2,t,T,vol,R,K*x))-N(d_minus(B,t,T,vol,R,x)))
         return vals
     
-    def plot_x(R,vol,t,T,K,B):
+    def plot_BSM_x(R,vol,t,T,K,B):
         x=np.linspace(0.001,B*1.1,1000)
         N=norm.cdf
         tau=T-t
-        vals=UpAndOutCall.calc_value(x,R,vol,t,T,K,B)
+        vals=UpAndOutCall.BSM_val(x,R,vol,t,T,K,B)
         vals=vals*(x<B)
         plt.plot(x,vals)
 
@@ -94,5 +94,5 @@ runThis=True
 if __name__ == "__main__" and runThis:
     ts=[0,3,6,9,9.3,9.6,9.9,10,10.0099]
     for t in ts:
-        UpAndOutCall.plot_x(1,1,t,10.01,5,20)
+        UpAndOutCall.plot_BSM_x(1,1,t,10.01,5,20)
     plt.show()

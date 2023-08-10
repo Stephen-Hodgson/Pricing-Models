@@ -163,8 +163,9 @@ class forward():
     def BSM_model(self):
         self.vals = (self.Underlying.get_vals()-self.R.zc_bond(self.Underlying.get_ts(),self.T)*self.K)
 
+    #rough idea for now. need to include discounting
     @staticmethod
-    def MC_model(self,t,T,K,vol_model,rate_model,N=10000,time_steps=1000,x_steps=100,divis=0):
+    def MC_simulation(self,t,T,K,vol_model,rate_model,N=10000,time_steps=1000,x_steps=100,divis=0):
         xs=np.linspace(K/3,3*K,x_steps)
         ts=np.linspace(0,T-t,time_steps)
         rates=rate_model.calc_r(ts[:-1])

@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+import random
 
 class BrownianMotion:
 
@@ -50,6 +52,9 @@ class BrownianMotion:
     
     def get_dts(self):
         return self.data["dt"]
+    
+    def get_drift(self):
+        return self.drift
 
     def update(self, dt, n=1, record_steps=0):
         """
@@ -104,10 +109,10 @@ class BrownianMotion:
     def __len__(self):
         return len(self.get_ts())
 
-    class JumpProcess:
-        def __init__(self, lda, f) -> None:
-            self.lda=lda
-            self.f=f
+    def __add__(self,W2):
+        assert(np.array_equal(self.get_ts(),W2.get_ts()))
+        return Compound_BM([self,W2])
+
 
     @classmethod
 
@@ -129,6 +134,50 @@ class BrownianMotion:
             W.update(ts[i]-ts[i-1], n=1, record_steps=1)
         return W
         
+#in production
+class Compound_BM(BrownianMotion):
+    def __init__(self,W_arr,ratio_arr=1):
+        self.W_arr=np.array(W_arr)
+        N=len(self.W_arr)
+        self.ratio_arr=np.broadcast_to(ratio_arr,(1,N)).reshape(N,1)
+        norm_factor=np.sqrt(np.sum(self.ratio_arr**2))
+        self.ratio_arr=(self.ratio_arr/norm_factor)
+        self.t_0=self.W_arr[0].t_0
+        self.t=self.W_arr[0].t
+        self.W_0=np.sum(np.array([W.W_0 for W in self.W_arr])*self.ratio_arr)
+        self.W=np.sum(np.array([W.get_W() for W in self.W_arr])*self.ratio_arr)
+        self.W=np.sum(np.array([W.get_drift() for W in self.W_arr])*self.ratio_arr)
+        #empty for now
+        self.data={}
+    
+    def get_Ws(self):
+        Ws=np.array([W.get_Ws() for W in self.W_arr])*self.ratio_arr
+        return np.sum(Ws,axis=0)
+    
+    def get_dts(self):
+        return self.W_arr[0].get_dts()
+    
+    def get_ts(self):
+        return self.W_arr[0].get_ts()
+    
+    
+    def get_dWs(self):
+        dWs=np.array([W.get_dWs() for W in self.W_arr])*self.ratio_arr
+        return np.sum(dWs,axis=0)
+    
+    def get_maxW(self):
+        Ws=np.array([W.get_Ws() for W in self.W_arr])*self.ratio_arr
+        Ws=np.sum(Ws,axis=0)
+        return np.max(Ws)
+    
+        
+
+
+class JumpProcess:
+    def __init__(self, lda, f) -> None:
+        self.lda=lda
+        self.f=f
+
 runthis=False
 if __name__=="__main__" and runthis:
     W=BrownianMotion(drift=1)
@@ -147,4 +196,17 @@ if __name__=="__main__" and runthis:
         Ws=np.append(Ws,W.get_W())
     print(np.mean(Ws)/t,np.var(Ws)/t)
 
-
+#test correlated BMs
+runthis=True
+if __name__=="__main__":
+    ts=np.linspace(0,10,1000)
+    W1=BrownianMotion.from_ts(ts)
+    W2=BrownianMotion.from_ts(ts)
+    #W3=Compound_BM([W1,W2],[1,1])
+    W3=W1+W2
+    plt.plot(W1.get_ts(),W1.get_Ws())
+    plt.plot(W2.get_ts(),W2.get_Ws())
+    plt.plot(W3.get_ts(),W3.get_Ws(),'--')
+    plt.plot(W1.get_ts(),W1.get_Ws()/np.sqrt(2)+W2.get_Ws()/np.sqrt(2),'.')
+    print(W3.ratio_arr)
+    plt.show()

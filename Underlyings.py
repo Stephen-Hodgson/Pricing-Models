@@ -246,6 +246,7 @@ if __name__=='__main__' and runthis:
     S3.plot_S_t()
     plt.show()
 
+#comparing constant vs array drift
 runthis=True
 if __name__=='__main__' and runthis:
     ts=np.linspace(0,10,1000)
