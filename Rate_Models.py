@@ -150,6 +150,10 @@ class NonRandomRate(RateModel):
     
     def forward_price(self,val,t,T):
         return val/self.zc_bond(t,T)
+    
+class oneFactorVasicek(RateModel):
+    pass
+
 
 
 #calculate the bond price for a sinusoidal interest rate

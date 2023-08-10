@@ -111,7 +111,7 @@ class BrownianMotion:
 
     def __add__(self,W2):
         assert(np.array_equal(self.get_ts(),W2.get_ts()))
-        return Compound_BM([self,W2])
+        return CompoundBM([self,W2])
 
 
     @classmethod
@@ -135,7 +135,7 @@ class BrownianMotion:
         return W
         
 #in production
-class Compound_BM(BrownianMotion):
+class CompoundBM(BrownianMotion):
     def __init__(self,W_arr,ratio_arr=1):
         self.W_arr=np.array(W_arr)
         N=len(self.W_arr)
